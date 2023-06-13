@@ -1,3 +1,9 @@
+/**
+ * キャラクターを移動させる命令をサーバに送る関数
+ * @param {Object} map マップの二次配列
+ * @param {Object} player 各プレイヤーの位置情報
+ * @param {Object} key キー入力を保存しておくためのオブジェクト
+ */
 const keyInput = (map, player, key) => {
     if (key.move === 0) {
         const { left, right, up, down } = key;

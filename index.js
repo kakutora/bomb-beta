@@ -25,15 +25,17 @@ app.get('/game', (req, res) => {
     res.sendFile(__dirname + '/views/game/');
 });
 
-io.of('/').on('connection', (socket) => {
+const root = io.of("/");
+
+root.on('connection', (socket) => {
     console.log('page1');
-    socket.emit("t", socket.id);
 });
 
+const game = io.of("/game");
 const players = {};
 let ready = 0;
 
-io.of('/game').on("connection", (socket) => {
+game.on("connection", (socket) => {
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
             console.error('ファイルの読み込みエラー:', err);
@@ -53,26 +55,24 @@ io.of('/game').on("connection", (socket) => {
             socket.emit("assignPlayerIdPos", { pid: playerID, y: y, x: x });
 
             socket.on("ready", () => {
-                console.log(ready);
-
                 ready++;
                 console.log(ready);
-                io.of('/game').emit('da', "da");
+                game.emit('da', "da");
                 if (ready == 2) {
-                    io.of('/game').emit("startGame", jsonData);
+                    game.emit("startGame", jsonData);
                     ready = 0;
                 }
             });
 
             socket.on("playerMove", (data) => {
                 players[playerID] = data;
-                io.of('/game').emit("playerUpdate", players);
+                game.emit("playerUpdate", players);
             });
 
             socket.on("disconnecting", () => {
                 delete players[playerID];
-                io.of('/game').emit("playerUpdate", players);
-                io.of('/game').emit('reload');
+                game.emit("playerUpdate", players);
+                game.emit('reload');
             });
         }
     });

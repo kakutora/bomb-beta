@@ -13,11 +13,6 @@
     <script src="/io/socket.io.min.js"></script>
     <script>
         const socket = io('/');
-        socket.on('t', (val) => {
-            setTimeout(() => {
-                console.log(val);
-            }, 1000);
-        });
     </script>
 </body>
 
